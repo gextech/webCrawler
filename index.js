@@ -1,3 +1,4 @@
+'use strict'
 var argv =  require('minimist')(process.argv.slice(2)),
     nwrun = require('nwrun'),
     chromedriver = require('chromedriver');
