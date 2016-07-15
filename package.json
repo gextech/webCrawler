@@ -1,0 +1,21 @@
+{
+  "name": "web-crawler",
+  "version": "0.0.1",
+  "description": "This is a simple web crawler",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crawler"
+  ],
+  "author": "Tomas Salazar",
+  "license": "ISC",
+  "devDependencies": {
+    "cheerio": "^0.20.0",
+    "chromedriver": "^2.21.2",
+    "minimist": "^1.2.0",
+    "nightwatch": "^0.9.5",
+    "nwrun": "^0.2.2"
+  }
+}
