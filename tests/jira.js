@@ -8,25 +8,48 @@ console.log('settings', settings);
 var acc = settings.auth.user;
 var pwd = settings.auth.pass;
 
-var parse = function(source){
+var data = 'Summary | Issue Type | Component | Issue Id | Parent Id | Description | Epic Link | Labels | Epic Name \n';
+var issueId  = 0;
+var parse = function(url){
+
+
+   return function(source){
+
+    issueId++;
 
     var $ = cheerio.load(source.value);
-    var component =  $('#main h1').find('a').text();
-    $('.jira-issue').remove();
-    $('#main #content h3').each(function(){
-      var story = $(this).text().trim();
+    var epicName= $('#title-text').text().trim() + " Epic";
+    console.log("epicName", epicName);
+    console.log("issueId", issueId);
 
-      data = data + story + '|| Story |' + component + '\n';
+    data = data + epicName + '| Epic | | '+ issueId + '| | | | |'+ epicName + '\n';
+
+    var storySummary =  $('#main h1').find('a').text();
+    $('.jira-issue').remove();
+
+    $('#main #content h3').each(function(){
+      var label = $(this).text().trim();
+
+      issueId++;
+      var storyId = issueId;
+      var subTasksId = [];
 
       var lis =  $(this).next('ol').find('li');
       lis.each(function(){
 
+         issueId++;
+         var subTaskId = issueId;
+         subTasksId.push(subTaskId);
+
          var $this = $(this)
-         var sublist  = $this.find("ol").html();
-         $this.find("ol").remove()
-      
-         data = data + story + '| ' + $this.text().trim() + '| Task | ' + component + '\n';
+         $this.find("ol").remove();
+         var subSummary = $this.text().trim();
+
+          data = data + subSummary + '| Sub-task  | ' + label + '| '+ subTaskId + ' | '+ storyId + '| | | ' + label+ '\n';
       });
+
+
+        data = data + storySummary + ' - ' + label + ' | Story |' + label + ' | '+ storyId + ' | | Please refer to: ' +  url +  ' | ' + epicName +'| ' + label + '\n';
 
     });
 
@@ -40,12 +63,13 @@ var parse = function(source){
     return;
   
 }
+}
 
 
 var test = {};
 
 
-var generate = function(url, data){
+var generate = function(url, data, issueId){
 
 
  return function (browser){
@@ -58,12 +82,12 @@ var generate = function(url, data){
         .pause(2000)
         .url(url)
         .waitForElementVisible('body', 1000)
-        .source(parse)
+        .source(parse(url))
         .end();
  }
 }
 
-var data = 'Story| Summary| Issue Type | Component\n'
+
 // test["article"] = generate('https://gextech.atlassian.net/wiki/display/REMT/Article');
 // test["imageGallery"] = generate('https://gextech.atlassian.net/wiki/display/REMT/Image+Gallery');
 test['linkedArticle'] = generate('https://gextech.atlassian.net/wiki/display/GLOB/Global+Linked+Article', data);
